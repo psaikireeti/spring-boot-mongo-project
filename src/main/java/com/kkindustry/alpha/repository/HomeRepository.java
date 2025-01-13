@@ -1,4 +1,6 @@
 package com.kkindustry.alpha.repository;
 
-public class HomeRepository {
-}
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class HomeRepository {}

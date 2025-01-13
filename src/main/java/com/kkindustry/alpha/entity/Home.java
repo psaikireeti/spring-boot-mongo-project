@@ -1,4 +1,3 @@
 package com.kkindustry.alpha.entity;
 
-public class HomeEntity {
-}
+public class Home {}

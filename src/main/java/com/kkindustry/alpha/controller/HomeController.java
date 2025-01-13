@@ -11,12 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class HomeController {
 
-    @GetMapping(value = "/home")
-    public ResponseEntity<String> home(@RequestParam(value = "name") String name){
+  @GetMapping(value = "/home")
+  public ResponseEntity<String> home(@RequestParam(value = "name") String name) {
 
-
-        return ResponseEntity.ok(String.format("Hello "+name));
-
-    }
-
+    return ResponseEntity.ok(String.format("Hello " + name));
+  }
 }

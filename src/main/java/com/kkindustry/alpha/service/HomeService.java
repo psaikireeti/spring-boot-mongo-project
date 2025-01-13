@@ -1,4 +1,6 @@
 package com.kkindustry.alpha.service;
 
-public class HomeService {
-}
+import org.springframework.stereotype.Service;
+
+@Service
+public class HomeService {}
