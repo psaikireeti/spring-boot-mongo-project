@@ -1,6 +1,8 @@
 package com.kkindustry.alpha.entity;
 
 import java.util.Date;
+
+import com.kkindustry.alpha.util.Utils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,7 +11,7 @@ public class User {
   @Id private String id;
   private String name;
   private String email;
-  private Date createdDate;
+  private Date createdDate = new Date();
 
   public String getId() {
     return id;

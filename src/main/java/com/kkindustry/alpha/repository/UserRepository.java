@@ -1,12 +1,13 @@
 package com.kkindustry.alpha.repository;
 
 import com.kkindustry.alpha.entity.User;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class UserRepository {
-  public User getUserDetail(String id) {
+@EnableMongoRepositories
+public interface UserRepository extends MongoRepository<User, String> {
 
-    return new User();
-  }
 }
