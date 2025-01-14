@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/user")
@@ -28,9 +29,20 @@ public class UserController {
     return ResponseEntity.ok(userService.getAllUser());
   }
 
+  @GetMapping(value = "/{id}")
+  public ResponseEntity<Optional<User>> getUserById(@PathVariable("id") String id){
+    return ResponseEntity.ok(userService.getUserById(id));
+  }
+
   @DeleteMapping(value = "/{id}")
   public ResponseEntity<String> deleteUserById(@PathVariable("id") String id){
     userService.deleteUser(id);
     return ResponseEntity.ok("User deleted Successfully");
+  }
+  @DeleteMapping
+  public ResponseEntity<String> bulkDeleteUsers(@RequestBody List<String> ids){
+
+    userService.bulkDeleteUsers(ids);
+    return ResponseEntity.ok("Users deleted Successfully");
   }
 }
