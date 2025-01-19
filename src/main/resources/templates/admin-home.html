@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: linear-gradient(90deg, #3b82f6, #06b6d4);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-size: 2rem;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 2rem;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+        }
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        .card p {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+        .button {
+            display: block;
+            background: #3b82f6;
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            transition: background 0.3s;
+        }
+        .button:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+<header>Admin Dashboard</header>
+<div class="container">
+    <div class="card" onclick="window.location='/admin/manage-accounts';">
+        <h3>Manage Accounts</h3>
+        <p>Create, update, or delete user accounts.</p>
+        <a href="/admin/manage-accounts" class="button">Go</a>
+    </div>
+    <div class="card" onclick="window.location='/admin/system-logs';">
+        <h3>System Logs</h3>
+        <p>Monitor system activities and view logs.</p>
+        <a href="/admin/system-logs" class="button">View</a>
+    </div>
+    <div class="card" onclick="window.location='/admin/analytics';">
+        <h3>System Analytics</h3>
+        <p>View performance and user activity analytics.</p>
+        <a href="/admin/analytics" class="button">Explore</a>
+    </div>
+</div>
+</body>
+</html>

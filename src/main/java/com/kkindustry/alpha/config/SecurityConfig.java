@@ -46,6 +46,8 @@ public class SecurityConfig {
             auth ->
                 auth.requestMatchers("/login.html")
                     .permitAll() // Allow public access to login page
+                    .requestMatchers("/admin-home.html")
+                    .permitAll()
                     .anyRequest()
                     .authenticated() // All other requests require authentication
             )

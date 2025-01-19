@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receptionist Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #fef3c7;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #f97316;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-size: 2rem;
+        }
+        .container {
+            margin: 2rem;
+            text-align: center;
+        }
+        .button {
+            display: inline-block;
+            background: #fb923c;
+            color: white;
+            padding: 1rem 2rem;
+            margin: 1rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .button:hover {
+            background: #ea580c;
+        }
+    </style>
+</head>
+<body>
+<header>Receptionist Dashboard</header>
+<div class="container">
+    <a href="/receptionist/manage-patients" class="button">Manage Patients</a>
+    <a href="/receptionist/schedule-appointments" class="button">Schedule Appointments</a>
+    <a href="/receptionist/view-calendar" class="button">View Calendar</a>
+    <a href="/receptionist/assign-doctors" class="button">Assign Doctors</a>
+</div>
+</body>
+</html>

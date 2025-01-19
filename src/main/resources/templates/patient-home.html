@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #ede7f6;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #7e57c2;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-size: 2rem;
+        }
+        .container {
+            margin: 2rem;
+            text-align: center;
+        }
+        .button {
+            display: inline-block;
+            background: #9575cd;
+            color: white;
+            padding: 1rem 2rem;
+            margin: 1rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .button:hover {
+            background: #5e35b1;
+        }
+    </style>
+</head>
+<body>
+<header>Patient Dashboard</header>
+<div class="container">
+    <a href="/patient/view-appointments" class="button">View Appointments</a>
+    <a href="/patient/view-prescriptions" class="button">View Prescriptions</a>
+    <a href="/patient/doctor-feedback" class="button">Doctor Feedback</a>
+</div>
+</body>
+</html>
