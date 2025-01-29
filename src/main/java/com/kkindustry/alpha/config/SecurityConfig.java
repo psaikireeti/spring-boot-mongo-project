@@ -46,10 +46,8 @@ public class SecurityConfig {
             auth ->
                 auth.requestMatchers("/login.html")
                     .permitAll() // Allow public access to login page
-                    .requestMatchers("/admin-home.html")
-                    .permitAll()
                     .anyRequest()
-                    .authenticated() // All other requests require authentication
+                    .authenticated() // Allow all authenticated users to access any page
             )
         .formLogin(
             login ->
@@ -61,8 +59,8 @@ public class SecurityConfig {
                     .permitAll() // Allow access to the login page
             )
         .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login.html"))
-        .httpBasic(
-            Customizer.withDefaults()); // Optional: Enable HTTP Basic authentication for APIs
+        .httpBasic(Customizer.withDefaults()); // Enable HTTP Basic authentication for APIs
+
     return http.build();
   }
 
