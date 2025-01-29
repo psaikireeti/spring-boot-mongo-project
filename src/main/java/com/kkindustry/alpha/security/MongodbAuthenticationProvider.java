@@ -19,8 +19,8 @@ public class MongodbAuthenticationProvider implements UserDetailsService {
   }
 
   @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user = userRepository.findByUsername(username);
+  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    User user = userRepository.findByUsername(email);
     if (user == null) {
       throw new UsernameNotFoundException("User not found");
     }

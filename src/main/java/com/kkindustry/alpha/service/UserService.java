@@ -1,7 +1,9 @@
 package com.kkindustry.alpha.service;
 
+import com.kkindustry.alpha.constant.StringConstants;
 import com.kkindustry.alpha.entity.User;
 import com.kkindustry.alpha.repository.UserRepository;
+import com.kkindustry.alpha.util.RoleUtil;
 import com.kkindustry.alpha.util.Utils;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -22,12 +24,17 @@ public class UserService {
     this.passwordEncoder = passwordEncoder;
   }
 
-  public User saveUser(User user) {
+  public String saveUser(User user) {
     if (user.getId().isEmpty()) {
       user.setId(Utils.generateUUID());
     }
     user.setPassword(passwordEncoder.encode(user.getPassword()));
-    return userRepository.save(user);
+    if (RoleUtil.checkAdminAccess()) {
+      userRepository.save(user);
+    } else {
+      return StringConstants.INVALID_DATA_ACCESS;
+    }
+    return "User Saved Successfully..";
   }
 
   public Optional<User> getUserById(String id) {

@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 @EnableMongoRepositories
 public interface UserRepository extends MongoRepository<User, String> {
-  @Query("SELECT e FROM Employee e WHERE e.username = :username")
-  User findByUsername(@Param("username") String username);
+  @Query("SELECT * FROM Employee WHERE username = :email")
+  User findByUsername(@Param("email") String email);
 }
