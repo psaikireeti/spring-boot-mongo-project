@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Management System - Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: url('https://images.unsplash.com/photo-1506748686217-7a73d8690aaf') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            height: 100vh;
+        }
+
+        header {
+            padding: 2rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent header */
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: calc(100vh - 100px); /* Subtract header height */
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 2rem;
+            border-radius: 12px;
+            width: 30%;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card a {
+            text-decoration: none;
+            color: #fff;
+            background-color: #4c6ef5;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .feature-card a:hover {
+            background-color: #3b5bdb;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        footer p {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Welcome to the Hospital Management System</h1>
+</header>
+
+<div class="container">
+    <div class="feature-card">
+        <h2>Patient Management</h2>
+        <p>Manage patient records, appointments, and medical history.</p>
+        <a href="/patients">View Patients</a>
+    </div>
+
+    <div class="feature-card">
+        <h2>Doctor Dashboard</h2>
+        <p>Access doctors' schedules, patient data, and more.</p>
+        <a href="/doctors">View Doctor Dashboard</a>
+    </div>
+
+    <div class="feature-card">
+        <h2>Hospital Resources</h2>
+        <p>Manage hospital resources like beds, equipment, and rooms.</p>
+        <a href="/resources">View Resources</a>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2025 Hospital Management System | All Rights Reserved</p>
+</footer>
+
+</body>
+</html>

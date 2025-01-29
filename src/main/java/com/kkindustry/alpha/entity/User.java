@@ -1,16 +1,17 @@
 package com.kkindustry.alpha.entity;
 
 import java.util.Date;
-
-import com.kkindustry.alpha.util.Utils;
+import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "users")
 public class User {
   @Id private String id;
-  private String name;
+  private String username;
+  private String password;
   private String email;
+  private List<String> roles;
   private Date createdDate = new Date();
 
   public String getId() {
@@ -21,12 +22,20 @@ public class User {
     this.id = id;
   }
 
-  public String getName() {
-    return name;
+  public String getUsername() {
+    return username;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
   }
 
   public String getEmail() {
@@ -35,6 +44,14 @@ public class User {
 
   public void setEmail(String email) {
     this.email = email;
+  }
+
+  public List<String> getRoles() {
+    return roles;
+  }
+
+  public void setRoles(List<String> roles) {
+    this.roles = roles;
   }
 
   public Date getCreatedDate() {
