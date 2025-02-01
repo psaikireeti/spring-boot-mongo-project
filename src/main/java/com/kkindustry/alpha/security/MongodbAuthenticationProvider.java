@@ -20,7 +20,7 @@ public class MongodbAuthenticationProvider implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    User user = userRepository.findByUsername(email);
+    User user = userRepository.findByEmail(email);
     if (user == null) {
       throw new UsernameNotFoundException("User not found");
     }
