@@ -38,6 +38,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
       case ROLE_DOCTOR -> REDIRECT_ENDPOINT = "/doctor-home.html";
       case ROLE_RECEPTIONIST -> REDIRECT_ENDPOINT = "/receptionist-home.html";
       case ROLE_PHARMACIST -> REDIRECT_ENDPOINT = "/pharmacy-home.html";
+      case ROLE_PATIENT -> REDIRECT_ENDPOINT = "/patient-home.html";
     }
     response.sendRedirect(request.getContextPath() + REDIRECT_ENDPOINT);
   }
