@@ -1,4 +1,4 @@
-package com.kkindustry.alpha.config;
+package com.kkindustry.alpha.security;
 
 import com.kkindustry.alpha.security.CustomAuthenticationFailureHandler;
 import com.kkindustry.alpha.security.CustomAuthenticationSuccessHandler;
