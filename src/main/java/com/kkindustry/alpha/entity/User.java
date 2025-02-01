@@ -14,6 +14,8 @@ public class User {
   private List<String> roles;
   private Date createdDate = new Date();
 
+  public User() {}
+
   public String getId() {
     return id;
   }

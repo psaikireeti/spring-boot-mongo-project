@@ -1,5 +1,7 @@
 package com.kkindustry.alpha.security;
 
+import com.kkindustry.alpha.enums.RoleEnum;
+import com.kkindustry.alpha.util.RoleUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +29,16 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
   public void onAuthenticationSuccess(
       HttpServletRequest request, HttpServletResponse response, Authentication authentication)
       throws IOException, ServletException {
-    response.sendRedirect(request.getContextPath() + "/home.html");
+
+    String REDIRECT_ENDPOINT = "/home.html";
+
+    RoleEnum role = RoleUtil.getUserRole();
+    switch (role) {
+      case ROLE_ADMIN -> REDIRECT_ENDPOINT = "/admin-home.html";
+      case ROLE_DOCTOR -> REDIRECT_ENDPOINT = "/doctor-home.html";
+      case ROLE_RECEPTIONIST -> REDIRECT_ENDPOINT = "/receptionist-home.html";
+      case ROLE_PHARMACIST -> REDIRECT_ENDPOINT = "/pharmacy-home.html";
+    }
+    response.sendRedirect(request.getContextPath() + REDIRECT_ENDPOINT);
   }
 }
