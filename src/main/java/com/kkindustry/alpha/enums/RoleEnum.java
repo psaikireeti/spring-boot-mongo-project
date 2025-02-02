@@ -11,5 +11,6 @@ public enum RoleEnum {
   ROLE_PATIENT;
 
   public static final List<String> roleList =
-      Arrays.asList("ROLE_ADMIN", "ROLE_DOCTOR", "ROLE_RECEPTIONIST", "ROLE_PHARMACIST", "ROLE_PATIENT");
+      Arrays.asList(
+          "ROLE_ADMIN", "ROLE_DOCTOR", "ROLE_RECEPTIONIST", "ROLE_PHARMACIST", "ROLE_PATIENT");
 }

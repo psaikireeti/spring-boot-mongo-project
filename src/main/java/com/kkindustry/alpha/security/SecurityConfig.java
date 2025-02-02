@@ -1,8 +1,5 @@
 package com.kkindustry.alpha.security;
 
-import com.kkindustry.alpha.security.CustomAuthenticationFailureHandler;
-import com.kkindustry.alpha.security.CustomAuthenticationSuccessHandler;
-import com.kkindustry.alpha.security.MongodbAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

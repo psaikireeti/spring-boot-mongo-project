@@ -5,6 +5,7 @@ import com.kkindustry.alpha.constant.StringConstants;
 import com.kkindustry.alpha.entity.User;
 import com.kkindustry.alpha.enums.RoleEnum;
 import com.kkindustry.alpha.repository.UserRepository;
+import com.kkindustry.alpha.service.notification.EmailService;
 import com.kkindustry.alpha.util.Regex;
 import com.kkindustry.alpha.util.RoleUtil;
 import com.kkindustry.alpha.util.Utils;
@@ -20,34 +21,44 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
-  UserRepository userRepository;
-  PasswordEncoder passwordEncoder;
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
+
+  private final EmailService emailService;
 
   @Autowired
-  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+  public UserService(
+      UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
+    this.emailService = emailService;
   }
 
   public String saveUser(User user) {
-    if (user == null) {
-      return "user cannot be empty";
+    try {
+      if (user == null) {
+        return "user cannot be empty";
+      }
+
+      List<String> error = validateUser(user);
+      if (!error.isEmpty()) {
+        return error.get(0);
+      }
+
+      if (user.getId().isEmpty()) {
+        user.setId(Utils.generateUUID());
+      }
+      user.setPassword(passwordEncoder.encode(user.getPassword()));
+      if (RoleUtil.checkAdminAccess()) {
+        userRepository.save(user);
+        emailService.constructAndSendEmail(user.getEmail(), user.getUsername(), "WELCOME");
+      } else {
+        return StringConstants.INVALID_DATA_ACCESS;
+      }
+    } catch (Exception e) {
+      System.out.println("error : " + e.getMessage());
     }
 
-    List<String> error = validateUser(user);
-    if (!error.isEmpty()) {
-      return error.get(0);
-    }
-
-    if (user.getId().isEmpty()) {
-      user.setId(Utils.generateUUID());
-    }
-    user.setPassword(passwordEncoder.encode(user.getPassword()));
-    if (RoleUtil.checkAdminAccess()) {
-      userRepository.save(user);
-    } else {
-      return StringConstants.INVALID_DATA_ACCESS;
-    }
     return "User Saved Successfully..";
   }
 
