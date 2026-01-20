@@ -6,6 +6,11 @@
     <title>Patient Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Roboto', sans-serif;
             background: #ede7f6;
@@ -15,9 +20,25 @@
         header {
             background: #7e57c2;
             color: white;
-            padding: 1rem;
-            text-align: center;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 {
             font-size: 2rem;
+        }
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
         .container {
             margin: 2rem;
@@ -34,18 +55,183 @@
             font-weight: bold;
             text-decoration: none;
             transition: background 0.3s;
+            border: none;
+            cursor: pointer;
         }
         .button:hover {
             background: #5e35b1;
         }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 2rem;
+            border: 1px solid #888;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #000;
+        }
+        .list-item {
+            background: #f9fafb;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 6px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
-<header>Patient Dashboard</header>
+<header>
+    <h1>Patient Dashboard</h1>
+    <a href="/logout" class="logout-btn">Logout</a>
+</header>
 <div class="container">
-    <a href="/patient/view-appointments" class="button">View Appointments</a>
-    <a href="/patient/view-prescriptions" class="button">View Prescriptions</a>
-    <a href="/patient/doctor-feedback" class="button">Doctor Feedback</a>
+    <button class="button" onclick="openViewAppointments()">View My Appointments</button>
+    <button class="button" onclick="openViewPrescriptions()">View My Prescriptions</button>
 </div>
+
+<!-- View Appointments Modal -->
+<div id="appointmentsModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('appointmentsModal')">&times;</span>
+        <h2>My Appointments</h2>
+        <div id="appointmentsList"></div>
+    </div>
+</div>
+
+<!-- View Prescriptions Modal -->
+<div id="prescriptionsModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('prescriptionsModal')">&times;</span>
+        <h2>My Prescriptions</h2>
+        <div id="prescriptionsList"></div>
+    </div>
+</div>
+
+<script>
+    const API_BASE = '/alpha';
+
+    function openViewAppointments() {
+        document.getElementById('appointmentsModal').style.display = 'block';
+        const patientId = prompt('Enter your Patient ID:');
+        if (patientId) {
+            loadMyAppointments(patientId);
+        }
+    }
+
+    function openViewPrescriptions() {
+        document.getElementById('prescriptionsModal').style.display = 'block';
+        const patientId = prompt('Enter your Patient ID:');
+        if (patientId) {
+            loadMyPrescriptions(patientId);
+        }
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+
+    async function loadMyAppointments(patientId) {
+        try {
+            const response = await fetch(`${API_BASE}/appointment/patient/${patientId}`);
+            const appointments = await response.json();
+            const appointmentsList = document.getElementById('appointmentsList');
+            appointmentsList.innerHTML = '';
+            if (appointments.length === 0) {
+                appointmentsList.innerHTML = '<p>No appointments found.</p>';
+                return;
+            }
+            appointments.forEach(appointment => {
+                const appointmentDiv = document.createElement('div');
+                appointmentDiv.className = 'list-item';
+                const date = new Date(appointment.appointmentDate).toLocaleDateString();
+                appointmentDiv.innerHTML = `
+                    <h3>Appointment</h3>
+                    <p><strong>Date:</strong> ${date}</p>
+                    <p><strong>Time:</strong> ${appointment.appointmentTime}</p>
+                    <p><strong>Status:</strong> ${appointment.status}</p>
+                    <p><strong>Reason:</strong> ${appointment.reason || 'N/A'}</p>
+                    <p><strong>Notes:</strong> ${appointment.notes || 'N/A'}</p>
+                `;
+                appointmentsList.appendChild(appointmentDiv);
+            });
+        } catch (error) {
+            console.error('Error loading appointments:', error);
+            document.getElementById('appointmentsList').innerHTML = '<p>Error loading appointments.</p>';
+        }
+    }
+
+    async function loadMyPrescriptions(patientId) {
+        try {
+            const response = await fetch(`${API_BASE}/prescription/patient/${patientId}`);
+            const prescriptions = await response.json();
+            const prescriptionsList = document.getElementById('prescriptionsList');
+            prescriptionsList.innerHTML = '';
+            if (prescriptions.length === 0) {
+                prescriptionsList.innerHTML = '<p>No prescriptions found.</p>';
+                return;
+            }
+            prescriptions.forEach(prescription => {
+                const prescriptionDiv = document.createElement('div');
+                prescriptionDiv.className = 'list-item';
+                const date = new Date(prescription.prescriptionDate).toLocaleDateString();
+                let medicationsHtml = '<ul>';
+                if (prescription.medications && prescription.medications.length > 0) {
+                    prescription.medications.forEach(med => {
+                        medicationsHtml += `<li><strong>${med.medicineName}</strong> - ${med.dosage} - ${med.frequency} - ${med.duration}</li>`;
+                        if (med.instructions) {
+                            medicationsHtml += `<p style="margin-left: 20px; font-size: 0.9rem; color: #666;">Instructions: ${med.instructions}</p>`;
+                        }
+                    });
+                } else {
+                    medicationsHtml += '<li>No medications listed</li>';
+                }
+                medicationsHtml += '</ul>';
+                prescriptionDiv.innerHTML = `
+                    <h3>Prescription</h3>
+                    <p><strong>Date:</strong> ${date}</p>
+                    <p><strong>Diagnosis:</strong> ${prescription.diagnosis || 'N/A'}</p>
+                    <p><strong>Notes:</strong> ${prescription.notes || 'N/A'}</p>
+                    <p><strong>Medications:</strong></p>
+                    ${medicationsHtml}
+                `;
+                prescriptionsList.appendChild(prescriptionDiv);
+            });
+        } catch (error) {
+            console.error('Error loading prescriptions:', error);
+            document.getElementById('prescriptionsList').innerHTML = '<p>Error loading prescriptions.</p>';
+        }
+    }
+</script>
 </body>
 </html>

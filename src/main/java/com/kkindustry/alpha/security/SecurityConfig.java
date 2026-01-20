@@ -1,8 +1,5 @@
 package com.kkindustry.alpha.security;
 
-import com.kkindustry.alpha.security.CustomAuthenticationFailureHandler;
-import com.kkindustry.alpha.security.CustomAuthenticationSuccessHandler;
-import com.kkindustry.alpha.security.MongodbAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,8 +41,27 @@ public class SecurityConfig {
     http.csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
             auth ->
-                auth.requestMatchers("/login.html")
+                auth.requestMatchers("/login.html", "/home/interview")
                     .permitAll() // Allow public access to login page
+                    .requestMatchers("/admin-home.html", "/admin/**")
+                    .hasRole("ADMIN")
+                    .requestMatchers("/doctor-home.html", "/doctor/**", "/appointment/doctor/**")
+                    .hasAnyRole("DOCTOR", "ADMIN")
+                    .requestMatchers(
+                        "/receptionist-home.html",
+                        "/receptionist/**",
+                        "/appointment",
+                        "/appointment/**",
+                        "/patient")
+                    .hasAnyRole("RECEPTIONIST", "ADMIN")
+                    .requestMatchers("/pharmacy-home.html", "/pharmacy/**", "/prescription/**")
+                    .hasAnyRole("PHARMACIST", "ADMIN")
+                    .requestMatchers(
+                        "/patient-home.html",
+                        "/patient/**",
+                        "/appointment/patient/**",
+                        "/prescription/patient/**")
+                    .hasAnyRole("PATIENT", "ADMIN")
                     .anyRequest()
                     .authenticated() // Allow all authenticated users to access any page
             )

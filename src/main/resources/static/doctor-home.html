@@ -6,6 +6,11 @@
     <title>Doctor Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Roboto', sans-serif;
             background: #e0f7fa;
@@ -15,9 +20,25 @@
         header {
             background: #00acc1;
             color: white;
-            padding: 1rem;
-            text-align: center;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 {
             font-size: 2rem;
+        }
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
         .container {
             margin: 2rem;
@@ -34,19 +55,357 @@
             font-weight: bold;
             text-decoration: none;
             transition: background 0.3s;
+            border: none;
+            cursor: pointer;
         }
         .button:hover {
             background: #00acc1;
         }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 2rem;
+            border: 1px solid #888;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #000;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        .form-group textarea {
+            min-height: 100px;
+        }
+        .list-item {
+            background: #f9fafb;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 6px;
+            text-align: left;
+        }
+        .message {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 6px;
+            display: none;
+        }
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .medication-item {
+            border: 1px solid #ddd;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 6px;
+        }
+        .add-medication-btn {
+            background: #00acc1;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
-<header>Doctor Dashboard</header>
+<header>
+    <h1>Doctor Dashboard</h1>
+    <a href="/logout" class="logout-btn">Logout</a>
+</header>
 <div class="container">
-    <a href="/doctor/view-patients" class="button">View Patients</a>
-    <a href="/doctor/add-prescriptions" class="button">Add Prescriptions</a>
-    <a href="/doctor/manage-history" class="button">Manage History</a>
-    <a href="/doctor/schedule-follow-ups" class="button">Schedule Follow-Ups</a>
+    <button class="button" onclick="openViewAppointments()">View My Appointments</button>
+    <button class="button" onclick="openAddPrescription()">Add Prescription</button>
+    <button class="button" onclick="openViewPrescriptions()">View Prescriptions</button>
 </div>
+
+<!-- View Appointments Modal -->
+<div id="appointmentsModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('appointmentsModal')">&times;</span>
+        <h2>My Appointments</h2>
+        <div id="appointmentsList"></div>
+    </div>
+</div>
+
+<!-- Add Prescription Modal -->
+<div id="prescriptionModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('prescriptionModal')">&times;</span>
+        <h2>Add Prescription</h2>
+        <div id="prescriptionMessage" class="message"></div>
+        <form id="prescriptionForm" onsubmit="savePrescription(event)">
+            <div class="form-group">
+                <label>Patient ID:</label>
+                <input type="text" id="patientId" required>
+            </div>
+            <div class="form-group">
+                <label>Appointment ID:</label>
+                <input type="text" id="appointmentId">
+            </div>
+            <div class="form-group">
+                <label>Diagnosis:</label>
+                <textarea id="diagnosis" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Notes:</label>
+                <textarea id="notes"></textarea>
+            </div>
+            <div id="medicationsContainer">
+                <h3>Medications</h3>
+                <div id="medicationsList"></div>
+                <button type="button" class="add-medication-btn" onclick="addMedication()">Add Medication</button>
+            </div>
+            <button type="submit" class="button">Save Prescription</button>
+        </form>
+    </div>
+</div>
+
+<!-- View Prescriptions Modal -->
+<div id="viewPrescriptionsModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('viewPrescriptionsModal')">&times;</span>
+        <h2>My Prescriptions</h2>
+        <div id="prescriptionsList"></div>
+    </div>
+</div>
+
+<script>
+    const API_BASE = '/alpha';
+    let medicationCount = 0;
+
+    function openViewAppointments() {
+        document.getElementById('appointmentsModal').style.display = 'block';
+        loadMyAppointments();
+    }
+
+    function openAddPrescription() {
+        document.getElementById('prescriptionModal').style.display = 'block';
+        medicationCount = 0;
+        document.getElementById('medicationsList').innerHTML = '';
+    }
+
+    function openViewPrescriptions() {
+        document.getElementById('viewPrescriptionsModal').style.display = 'block';
+        loadMyPrescriptions();
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+
+    function addMedication() {
+        medicationCount++;
+        const medicationsList = document.getElementById('medicationsList');
+        const medicationDiv = document.createElement('div');
+        medicationDiv.className = 'medication-item';
+        medicationDiv.id = `medication-${medicationCount}`;
+        medicationDiv.innerHTML = `
+            <div class="form-group">
+                <label>Medicine Name:</label>
+                <input type="text" name="medicineName-${medicationCount}" required>
+            </div>
+            <div class="form-group">
+                <label>Dosage:</label>
+                <input type="text" name="dosage-${medicationCount}" required>
+            </div>
+            <div class="form-group">
+                <label>Frequency:</label>
+                <input type="text" name="frequency-${medicationCount}" placeholder="e.g., 2 times a day" required>
+            </div>
+            <div class="form-group">
+                <label>Duration:</label>
+                <input type="text" name="duration-${medicationCount}" placeholder="e.g., 7 days" required>
+            </div>
+            <div class="form-group">
+                <label>Instructions:</label>
+                <textarea name="instructions-${medicationCount}"></textarea>
+            </div>
+            <button type="button" onclick="removeMedication(${medicationCount})" style="background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">Remove</button>
+        `;
+        medicationsList.appendChild(medicationDiv);
+    }
+
+    function removeMedication(id) {
+        const medicationDiv = document.getElementById(`medication-${id}`);
+        if (medicationDiv) {
+            medicationDiv.remove();
+        }
+    }
+
+    async function savePrescription(event) {
+        event.preventDefault();
+        const medications = [];
+        for (let i = 1; i <= medicationCount; i++) {
+            const medicationDiv = document.getElementById(`medication-${i}`);
+            if (medicationDiv) {
+                medications.push({
+                    medicineName: document.querySelector(`[name="medicineName-${i}"]`).value,
+                    dosage: document.querySelector(`[name="dosage-${i}"]`).value,
+                    frequency: document.querySelector(`[name="frequency-${i}"]`).value,
+                    duration: document.querySelector(`[name="duration-${i}"]`).value,
+                    instructions: document.querySelector(`[name="instructions-${i}"]`).value
+                });
+            }
+        }
+
+        const prescription = {
+            patientId: document.getElementById('patientId').value,
+            appointmentId: document.getElementById('appointmentId').value || null,
+            diagnosis: document.getElementById('diagnosis').value,
+            notes: document.getElementById('notes').value,
+            medications: medications
+        };
+
+        try {
+            const response = await fetch(`${API_BASE}/prescription`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(prescription)
+            });
+            const result = await response.text();
+            showMessage('prescriptionMessage', result, response.ok ? 'success' : 'error');
+            if (response.ok) {
+                document.getElementById('prescriptionForm').reset();
+                document.getElementById('medicationsList').innerHTML = '';
+                medicationCount = 0;
+            }
+        } catch (error) {
+            showMessage('prescriptionMessage', 'Error: ' + error.message, 'error');
+        }
+    }
+
+    async function loadMyAppointments() {
+        try {
+            // Get current user's doctor ID - in real app, get from session
+            const doctorId = prompt('Enter your Doctor ID:');
+            if (!doctorId) return;
+            
+            const response = await fetch(`${API_BASE}/appointment/doctor/${doctorId}`);
+            const appointments = await response.json();
+            const appointmentsList = document.getElementById('appointmentsList');
+            appointmentsList.innerHTML = '';
+            if (appointments.length === 0) {
+                appointmentsList.innerHTML = '<p>No appointments found.</p>';
+                return;
+            }
+            appointments.forEach(appointment => {
+                const appointmentDiv = document.createElement('div');
+                appointmentDiv.className = 'list-item';
+                const date = new Date(appointment.appointmentDate).toLocaleDateString();
+                appointmentDiv.innerHTML = `
+                    <h3>Appointment</h3>
+                    <p><strong>Date:</strong> ${date}</p>
+                    <p><strong>Time:</strong> ${appointment.appointmentTime}</p>
+                    <p><strong>Status:</strong> ${appointment.status}</p>
+                    <p><strong>Reason:</strong> ${appointment.reason || 'N/A'}</p>
+                `;
+                appointmentsList.appendChild(appointmentDiv);
+            });
+        } catch (error) {
+            console.error('Error loading appointments:', error);
+        }
+    }
+
+    async function loadMyPrescriptions() {
+        try {
+            const doctorId = prompt('Enter your Doctor ID:');
+            if (!doctorId) return;
+            
+            const response = await fetch(`${API_BASE}/prescription/doctor/${doctorId}`);
+            const prescriptions = await response.json();
+            const prescriptionsList = document.getElementById('prescriptionsList');
+            prescriptionsList.innerHTML = '';
+            if (prescriptions.length === 0) {
+                prescriptionsList.innerHTML = '<p>No prescriptions found.</p>';
+                return;
+            }
+            prescriptions.forEach(prescription => {
+                const prescriptionDiv = document.createElement('div');
+                prescriptionDiv.className = 'list-item';
+                const date = new Date(prescription.prescriptionDate).toLocaleDateString();
+                let medicationsHtml = '<ul>';
+                prescription.medications.forEach(med => {
+                    medicationsHtml += `<li>${med.medicineName} - ${med.dosage} - ${med.frequency}</li>`;
+                });
+                medicationsHtml += '</ul>';
+                prescriptionDiv.innerHTML = `
+                    <h3>Prescription</h3>
+                    <p><strong>Date:</strong> ${date}</p>
+                    <p><strong>Diagnosis:</strong> ${prescription.diagnosis}</p>
+                    <p><strong>Medications:</strong></p>
+                    ${medicationsHtml}
+                `;
+                prescriptionsList.appendChild(prescriptionDiv);
+            });
+        } catch (error) {
+            console.error('Error loading prescriptions:', error);
+        }
+    }
+
+    function showMessage(elementId, message, type) {
+        const messageDiv = document.getElementById(elementId);
+        messageDiv.textContent = message;
+        messageDiv.className = `message ${type}`;
+        messageDiv.style.display = 'block';
+        setTimeout(() => {
+            messageDiv.style.display = 'none';
+        }, 5000);
+    }
+</script>
 </body>
 </html>
