@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Store Dashboard</title>
+    <title>Pharmacy Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Poppins', sans-serif;
             background: #e8eaf6;
@@ -15,9 +20,25 @@
         header {
             background: #3f51b5;
             color: white;
-            padding: 1rem;
-            text-align: center;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 {
             font-size: 1.5rem;
+        }
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
         .dashboard {
             margin: 2rem;
@@ -46,15 +67,170 @@
         .button:hover {
             background: #5c6bc0;
         }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 2rem;
+            border: 1px solid #888;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #000;
+        }
+        .list-item {
+            background: #f9fafb;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 6px;
+            text-align: left;
+        }
+        .message {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 6px;
+            display: none;
+        }
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
     </style>
 </head>
 <body>
-<header>Medical Store Dashboard</header>
+<header>
+    <h1>Pharmacy Dashboard</h1>
+    <a href="/logout" class="logout-btn">Logout</a>
+</header>
 <div class="dashboard">
     <div class="form-group">
-        <input type="text" placeholder="Enter Patient ID" />
+        <input type="text" id="patientIdSearch" placeholder="Enter Patient ID" />
     </div>
-    <button class="button">Search</button>
+    <button class="button" onclick="searchPrescriptions()">Search Prescriptions</button>
+    <button class="button" onclick="viewAllPrescriptions()">View All Prescriptions</button>
 </div>
+
+<!-- Prescriptions Modal -->
+<div id="prescriptionsModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('prescriptionsModal')">&times;</span>
+        <h2>Prescriptions</h2>
+        <div id="prescriptionsList"></div>
+    </div>
+</div>
+
+<script>
+    const API_BASE = '/alpha';
+
+    function searchPrescriptions() {
+        const patientId = document.getElementById('patientIdSearch').value;
+        if (!patientId) {
+            alert('Please enter a Patient ID');
+            return;
+        }
+        document.getElementById('prescriptionsModal').style.display = 'block';
+        loadPrescriptionsByPatient(patientId);
+    }
+
+    function viewAllPrescriptions() {
+        document.getElementById('prescriptionsModal').style.display = 'block';
+        loadAllPrescriptions();
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+
+    async function loadPrescriptionsByPatient(patientId) {
+        try {
+            const response = await fetch(`${API_BASE}/prescription/patient/${patientId}`);
+            const prescriptions = await response.json();
+            displayPrescriptions(prescriptions);
+        } catch (error) {
+            console.error('Error loading prescriptions:', error);
+            document.getElementById('prescriptionsList').innerHTML = '<p>Error loading prescriptions.</p>';
+        }
+    }
+
+    async function loadAllPrescriptions() {
+        try {
+            const response = await fetch(`${API_BASE}/prescription`);
+            const prescriptions = await response.json();
+            displayPrescriptions(prescriptions);
+        } catch (error) {
+            console.error('Error loading prescriptions:', error);
+            document.getElementById('prescriptionsList').innerHTML = '<p>Error loading prescriptions.</p>';
+        }
+    }
+
+    function displayPrescriptions(prescriptions) {
+        const prescriptionsList = document.getElementById('prescriptionsList');
+        prescriptionsList.innerHTML = '';
+        if (prescriptions.length === 0) {
+            prescriptionsList.innerHTML = '<p>No prescriptions found.</p>';
+            return;
+        }
+        prescriptions.forEach(prescription => {
+            const prescriptionDiv = document.createElement('div');
+            prescriptionDiv.className = 'list-item';
+            const date = new Date(prescription.prescriptionDate).toLocaleDateString();
+            let medicationsHtml = '<ul>';
+            if (prescription.medications && prescription.medications.length > 0) {
+                prescription.medications.forEach(med => {
+                    medicationsHtml += `<li><strong>${med.medicineName}</strong> - Dosage: ${med.dosage} - Frequency: ${med.frequency} - Duration: ${med.duration}</li>`;
+                    if (med.instructions) {
+                        medicationsHtml += `<p style="margin-left: 20px; font-size: 0.9rem; color: #666;">Instructions: ${med.instructions}</p>`;
+                    }
+                });
+            } else {
+                medicationsHtml += '<li>No medications listed</li>';
+            }
+            medicationsHtml += '</ul>';
+            prescriptionDiv.innerHTML = `
+                <h3>Prescription</h3>
+                <p><strong>Patient ID:</strong> ${prescription.patientId}</p>
+                <p><strong>Date:</strong> ${date}</p>
+                <p><strong>Diagnosis:</strong> ${prescription.diagnosis || 'N/A'}</p>
+                <p><strong>Notes:</strong> ${prescription.notes || 'N/A'}</p>
+                <p><strong>Medications:</strong></p>
+                ${medicationsHtml}
+            `;
+            prescriptionsList.appendChild(prescriptionDiv);
+        });
+    }
+</script>
 </body>
 </html>

@@ -7,6 +7,8 @@ import com.kkindustry.alpha.util.Utils;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.CollectionOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class StartUpInitializer {
+  private static final Logger logger = LoggerFactory.getLogger(StartUpInitializer.class);
 
   @Autowired MongoTemplate mongoTemplate;
   @Autowired UserService userService;
@@ -29,16 +32,29 @@ public class StartUpInitializer {
 
   public void initializeCollections() {
     Set<String> collectionNames = mongoTemplate.getCollectionNames();
-    if (collectionNames.isEmpty()) {
-      System.out.println("No collections found in MongoDB. Creating required collections...");
+    logger.info("Checking collections in MongoDB...");
 
+    if (!collectionNames.contains("users")) {
       mongoTemplate.createCollection("users", CollectionOptions.empty());
-
-      System.out.println("Collections created successfully.");
-
-    } else {
-      System.out.println("Collections already exist.");
+      logger.info("Created 'users' collection.");
     }
+
+    if (!collectionNames.contains("patients")) {
+      mongoTemplate.createCollection("patients", CollectionOptions.empty());
+      logger.info("Created 'patients' collection.");
+    }
+
+    if (!collectionNames.contains("appointments")) {
+      mongoTemplate.createCollection("appointments", CollectionOptions.empty());
+      logger.info("Created 'appointments' collection.");
+    }
+
+    if (!collectionNames.contains("prescriptions")) {
+      mongoTemplate.createCollection("prescriptions", CollectionOptions.empty());
+      logger.info("Created 'prescriptions' collection.");
+    }
+
+    logger.info("Collections initialization completed.");
   }
 
   public void createAdminUserIfNotExist() {

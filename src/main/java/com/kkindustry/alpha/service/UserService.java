@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
+  private static final Logger logger = LoggerFactory.getLogger(UserService.class);
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
 
@@ -41,11 +44,11 @@ public class UserService {
       }
 
       List<String> error = validateUser(user);
-      if (!error.isEmpty()) {
+      if (error != null && !error.isEmpty()) {
         return error.get(0);
       }
 
-      if (user.getId().isEmpty()) {
+      if (user.getId() == null || user.getId().isEmpty()) {
         user.setId(Utils.generateUUID());
       }
       user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -56,7 +59,7 @@ public class UserService {
         return StringConstants.INVALID_DATA_ACCESS;
       }
     } catch (Exception e) {
-      System.out.println("error : " + e.getMessage());
+      logger.error("Error saving user: {}", e.getMessage(), e);
     }
 
     return "User Saved Successfully..";
